@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +18,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import retrofit2.http.Url;
 
 public class MainActivity extends AppCompatActivity {
 private MosqueDataAdapter mosquedataAdapter;
@@ -32,17 +34,17 @@ private RecyclerView recyclerView;
 
         mosqueArrayList = new ArrayList<>();
 
-        fetch_json();
+        fetch_json(MosqueInterface.jsonurl);
 
 
     }
-    public void fetch_json(){
+    public void fetch_json(String url){
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MosqueInterface.jsonurl)
+                .baseUrl(String.valueOf(url))
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
         MosqueInterface api=retrofit.create(MosqueInterface.class);
-        Call<String> call=api.getdata();
+        Call<String> call=api.getdata(33,"page=1");
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -89,6 +91,8 @@ private RecyclerView recyclerView;
             mosquedataAdapter = new MosqueDataAdapter(this,mosqueArrayList);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(mosquedataAdapter);
+
+
 
 
         } catch (JSONException e) {
